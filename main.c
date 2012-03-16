@@ -9,11 +9,11 @@ main()
     upper=300;
     step=20;
 
-    fahr= lower;
+    fahr= upper;
     printf("Celsius\tFahr\n");
-    while( fahr<= upper ){
-        celsius= 5*(fahr-32) /9;
+    while( fahr >= lower ){
+        celsius= 5 * (fahr-32) / 9;
         printf("%d\t%d\n", celsius, fahr);
-        fahr=fahr+step;
+        fahr=fahr-step;
     }
 }
