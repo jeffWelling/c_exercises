@@ -2,10 +2,9 @@
 
 main()
 {
-    long n;
-
-    n=0;
-    while(getchar() != EOF)
-        n++;
-    printf("%ld/n", n);
+    int i = 0;
+    while( i<=255 ){
+        printf("%c\t%d\n", i, i);
+        ++i;
+    }
 }
