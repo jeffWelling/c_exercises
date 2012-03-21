@@ -2,15 +2,10 @@
 #define IN 0
 #define OUT 1
 
-//Write a program that copies input to output replacing each
-// Series of spaces with one space
+// Write a program to copy its input to its output
+// replacing each tab with \t, backspace with \b and
+// backslash with //. This makes tabs and backspaces visible
+// in an unambiguous way
 main()
 {
-    int c=0;
-    while( (c=getchar()) != EOF ){
-        if( c==92 ) //   Backslash
-            printf("\\");
-        if( c==9 )  // Tab
-            printf("\\t");
-    }
 }
