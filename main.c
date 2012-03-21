@@ -7,18 +7,10 @@
 main()
 {
     int c=0;
-    int space=0;
     while( (c=getchar()) != EOF ){
-        if( c==32 ){
-            if( space==0 ){
-                printf(" ");
-                space=OUT;
-            } else if( space==1 ){
-                ;
-            }
-        } else {
-            printf("%c", c);
-            space=IN;
-        }
+        if( c==92 ) //   Backslash
+            printf("\\");
+        if( c==9 )  // Tab
+            printf("\\t");
     }
 }
