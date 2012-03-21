@@ -1,23 +1,23 @@
 #include <stdio.h>
-#define IN 0
-#define OUT 1
+#define IN 1
+#define OUT 0
 
-// Write a program to copy its input to its output
-// replacing each tab with \t, backspace with \b and
-// backslash with //. This makes tabs and backspaces visible
-// in an unambiguous way
+/* Write a program that prints its input one word per line */
 main()
 {
     int c=0;
-    while( (c=getchar()) != EOF ){
-        if( c==9 ){
-            printf("\\t");
-        }else if( c==8 ){
-            printf("\\b");
-        }else if( c==92 ){
-            printf("\\\\");
+    int state=OUT;
+    while( (c=getchar()) != EOF){
+        if( state==OUT && (c>=32 && c<=126 )){
+            state=IN;
+            putchar(c);
+        } else if( state==IN && (c<=32 || c>=176 )){
+            state=OUT;
+            printf("\n");
+            putchar(c);
         } else {
             putchar(c);
         }
     }
+
 }
