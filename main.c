@@ -8,4 +8,16 @@
 // in an unambiguous way
 main()
 {
+    int c=0;
+    while( (c=getchar()) != EOF ){
+        if( c==9 ){
+            printf("\\t");
+        }else if( c==8 ){
+            printf("\\b");
+        }else if( c==92 ){
+            printf("\\\\");
+        } else {
+            putchar(c);
+        }
+    }
 }
