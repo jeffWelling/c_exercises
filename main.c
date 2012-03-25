@@ -7,7 +7,7 @@
 main()
 {
     int c=0;
-    int histogram[50]={0};
+    int histogram[52]={0};
     int current_length=0;
     int state=OUT;
     int occurances=0;
@@ -15,22 +15,13 @@ main()
 
     //Here we borrow C so we don't have to use i
     while( (c=getchar()) != EOF && c!=81){
-        if( (c==32 || c==10) && state==IN ){
-            //End of word
-            state=OUT;
-            histogram[current_length]++;
-            current_length++;
-        }else if( (c>=33 && c<=126) && state==OUT ){
-            //Start of word
-            state=IN;
-            current_length=1;
-        }else if( (c>=33 && c<=126) && state==IN ){
-            //In a word
-            current_length++;
-        } else {
-            //Not in a word
-            //Example, "  " or " \n "
-            ;
+        if( (c>=65 && c<=90) || (c>=97 && c<=122) ){
+            //Valid character
+            if( c>=65 && c<=90 ){
+                histogram[c-65]++;
+            } else {
+                histogram[c-71]++;
+            }
         }
     }
 
@@ -53,9 +44,14 @@ main()
         printf("\n");
     }
     //Print the numbers at the bottom
-    for( c=0; c<=49; c++){
-        printf("%02d ", c);
+    for( i=0; i<=51; i++ ){
+        if( i>=0 && i<=25 ){
+            printf("%c  ", i+65);
+        } else {
+            printf("%c  ", i+71);
+        }
     }
+
     printf("\n");
     return 0;
 }
