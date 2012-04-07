@@ -14,13 +14,10 @@ main()
 
     max=0;
     while((len = getaline(line, MAXLINE)) > 0){
-        if( len > max ){
-            max= len;
-            copy(longest,line);
+        if( len >= 80 ){
+            printf("%s", line);
         }
     }
-    if( max > 0 ) //there was a line
-        printf("Longest line:%s\nLength of line:%d\n", longest, max);
     return 0;
 }
 
@@ -38,13 +35,4 @@ int getaline( char s[], int limit )
     }
     s[i]='\0';
     return i;
-}
-
-//copy: copy 'from' into 'to'
-void copy( char to[], char from[] )
-{
-    int i;
-    i=0;
-    while( (to[i] = from[i]) != '\0' )
-        i++;
 }
