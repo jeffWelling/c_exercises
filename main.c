@@ -7,10 +7,10 @@ int detab( char s[], int limit );
 int len=0;
 char s[MAXLINE];
 
-//1-20: Write a program detab that replaces tabs in the 
-//input with the proper number of blanks to space 
-//to the next tab stop. Assume a fixed set of tab 
-//stops, say every n columns.
+// 1-21: Write a program `entab` that replaces strings of blanks by the
+// minimum number of tabs and blanks to achieve the same spacing. Use
+// the same tab stops as for detab. When either a tab or a single blank
+// would suffice to reach a tab stop, which should be given preference?
 int main(){
     int len;
     char s[MAXLINE];
