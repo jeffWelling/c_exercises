@@ -1,57 +1,71 @@
 #include <stdio.h>
-#define MAXLINE 100
+#define MAXLINE 200
+#define TABSTOP 8
+int getline_( char s[], int limit);
+int detab( char s[], int limit );
 
-int getaline( char line[], int maxline );
-void copy( char to[], char from[] );
-void reverse( char s[] );
+int len=0;
+char s[MAXLINE];
 
-//Write a function reverse(s) that reverses the character string s. 
-//Use it to write a program that reverses its input a line at a time.
-main()
-{
-    int len; // current line length
-    int max; // max line length
-    char line[MAXLINE]; // current line
-    char longest[MAXLINE]; // max line
-
-    max=0;
-    while((len = getaline(line, MAXLINE)) > 0){
-        reverse(line);
-        printf("%s", line);
-    }
-    return 0;
+//1-20: Write a program detab that replaces tabs in the 
+//input with the proper number of blanks to space 
+//to the next tab stop. Assume a fixed set of tab 
+//stops, say every n columns.
+int main(){
+    int len;
+    char s[MAXLINE];
+    //assume tabstop every 4 spaces
+    getline_( s, MAXLINE );
+    detab( s, MAXLINE );
+    printf( "%s", s );
 }
 
-// getaline: read a line into s, return length
-int getaline( char s[], int limit )
-{
-    char c;
+int detab( char s[], int limit ){
+    int s_i, ns_i, temp;;
+    s_i= ns_i= temp= 0;
+    char new_string[MAXLINE];
+    while( s[s_i] != '\0' && s_i<=limit ){
+        if( s[s_i] == 9 ){
+            temp=ns_i;
+            //If we're already on a tabstop boundary, increment
+            if( (temp%TABSTOP) ==0 ){
+                new_string[ns_i]=' ';
+                ns_i++;
+                temp++;
+            }
+            while( (temp%TABSTOP) != 0 ){
+                new_string[ns_i]=' ';
+                ns_i++;
+                temp++;
+            }
+            s_i++;
+        } else {
+            new_string[ns_i]=s[s_i];
+            ns_i++;
+            s_i++;
+        }
+    }
+    new_string[ns_i]='\0';
+    ns_i=0;
+    while( new_string[ns_i] != '\0' ){
+        s[ns_i]=new_string[ns_i];
+        ns_i++;
+    }
+    s[ns_i]='\0';
+    return ns_i;
+}
+
+int getline_( char s[], int limit ){
+    int c;
     int i=0;
-    while( (c=getchar()) != '\n' && c!=EOF && i < limit ){
+    while( (c=getchar()) != EOF && c!= '\n' && i<limit ){
         s[i]=c;
         i++;
     }
-
-    if( c=='\n') {
-        s[i]='\n';
+    if( c=='\n' ){
+        s[i]=c;
         i++;
     }
     s[i]='\0';
     return i;
-}
-
-void reverse( char s[] ){
-    int a=0;
-    int b=0;
-    int temp;
-    while( s[b] != '\0' && b<=MAXLINE ){ b++; }
-    //For '\n' and '\0'
-    b--;
-    while( a<=b ){
-        temp=s[a];
-        s[a]=s[b];
-        s[b]=temp;
-        a++;
-        b--;
-    }
 }
