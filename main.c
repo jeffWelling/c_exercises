@@ -1,82 +1,72 @@
 #include <stdio.h>
-#define MAXLINE 200
+#define MAXLINE 400
 #define TABSTOP 4
+#define MAX_COL 80
 int getline_( char s[], int limit);
-int entab( char s[], int limit );
-int seq_spaces( char s[], int i );
+int fold( char s[], int limit);
+int last_nonblank( char s[], int s_i ); 
+int substrcp( char s[], int s_from, int s_to, char new_string[], int ns_i, int limit);
+void copy_str( char from[], int f_i, char to[], int t_i, int limit );
 
-int len=0;
-char s[MAXLINE];
-
-// 1-21: Write a program `entab` that replaces strings of blanks by the
-// minimum number of tabs and blanks to achieve the same spacing. Use
-// the same tab stops as for detab. When either a tab or a single blank
-// would suffice to reach a tab stop, which should be given preference?
+//1-22. Write a program to ``fold'' long input lines into 
+//two or more shorter lines after the last non-blank character 
+//that occurs before the n-th column of input. Make sure your
+//program does something intelligent with very long lines, 
+//and if there are no blanks or tabs before the specified 
+//column.
 int main(){
     char s[MAXLINE];
-    //assume tabstop every 4 spaces
     getline_( s, MAXLINE );
-    entab( s, MAXLINE );
+    fold( s, MAXLINE );
     printf( "%s", s );
     return 0;
 }
 
-int entab( char s[], int limit ){
-    int s_i, ns_i, temp;;
-    s_i= ns_i= temp= 0;
+int fold( char s[], int limit ){
+    int s_i, ns_i, current_col;
+    int s_last_copy, last_space;
+    int num_copied;
     char new_string[MAXLINE];
-    while( s[s_i] != '\0' && s_i<=limit ){
-        //If spaces? > TABSTOP
-        //      delete_spaces(TABSTOP)
-        //      insert_tab(s)
-        if( s[s_i] == 32 ){
-            if( seq_spaces(s,s_i) >= TABSTOP ){
-                while( seq_spaces(s,s_i) >= TABSTOP ){
-                    s_i=s_i+TABSTOP;
-                    new_string[ns_i]='\t';
-                    ns_i++;
-                }
-            } else {
-                new_string[ns_i]=s[s_i];
-                ns_i++;
-                s_i++;
-            }
-            /*temp=ns_i;
-            //If we're already on a tabstop boundary, increment
-            if( (temp%TABSTOP) ==0 ){
-                new_string[ns_i]=' ';
-                ns_i++;
-                temp++;
-            }
-            while( (temp%TABSTOP) != 0 ){
-                new_string[ns_i]=' ';
-                ns_i++;
-                temp++;
-            }
-            s_i++;*/
-        } else {
-            new_string[ns_i]=s[s_i];
+    s_i= s_last_copy= num_copied= 0;
+    ns_i= current_col= 0;
+    //seek first non-blank character before nth column
+    while( s[s_i] != '\0' && s_i < limit && ns_i < limit ){
+        //at the end of a line, copy said line into new_string
+
+        if( current_col == MAX_COL ){
+            //find last space
+            last_space=last_nonblank(s, s_i);
+            last_space++; //so that we have the space after the last non-blank char
+
+            //copy s from s_last_copy to last_space into new_string
+            num_copied= substrcp( s, s_last_copy, last_space, new_string, ns_i, MAXLINE );
+            ns_i= ns_i + num_copied;
+            s_last_copy= last_space;
+
+            //insert newline into new_string, increment ns_i
+            new_string[ns_i]='\n';
             ns_i++;
+            new_string[ns_i]='\0';
+            // s_i= last_space
+            s_i=last_space;
+            current_col=0;
+        } else {
+            current_col++;
             s_i++;
         }
     }
+    //copy last of s to new_string
+    last_space= last_nonblank(s, s_i);
+    if( s[s_i]!='\0' )
+        last_space++;
+    //need to make sure that substrcp doesn't copy past
+    //the end of new_string.
+    num_copied= substrcp( s, s_last_copy, MAXLINE, new_string, ns_i, MAXLINE );
+    ns_i= ns_i+num_copied;
     new_string[ns_i]='\0';
-    ns_i=0;
-    while( new_string[ns_i] != '\0' ){
-        s[ns_i]=new_string[ns_i];
-        ns_i++;
-    }
-    s[ns_i]='\0';
-    return ns_i;
-}
-
-int seq_spaces( char s[], int i ){
-	int counter=0;
-	while( s[i] == 32 ){
-		counter++;
-		i++;
-	}
-    return counter;
+    s_i=last_space;
+    copy_str( new_string, 0, s, 0, MAXLINE );
+    return 0;
 }
 
 int getline_( char s[], int limit ){
@@ -92,4 +82,48 @@ int getline_( char s[], int limit ){
     }
     s[i]='\0';
     return i;
+}
+
+int last_nonblank( char s[], int s_i ){
+    int found_blank=0;
+    if( s_i <= 0 )
+        return -1;
+
+    if( s[s_i]=='\0' )
+        return s_i;
+
+    while( s_i >= 0 ){
+       if( found_blank==1 && s[s_i]!='\t' && s[s_i]!=32 )
+           return s_i+1;
+
+       if( found_blank==0 && (s[s_i]=='\t' || s[s_i]==32))
+           found_blank=1;
+
+       s_i--;
+    }
+    return -1;
+}
+
+int substrcp( char s[], int s_from, int s_to, char new_string[], int ns_i, int limit ){
+    //copy s[ s_from - s_to ] into new_string
+    int i=s_from;
+    int counter=0;
+    while( i<s_to && i<limit && ns_i<limit){
+        new_string[ns_i]= s[i];
+        ns_i++;
+        i++;
+        counter++;
+    }
+    new_string[ns_i]='\0';
+    return counter;
+}
+
+void copy_str( char string[], int s_i, char new_string[], int ns_i, int limit ){
+    while( s_i<=limit && string[s_i]!='\0' && ns_i<=limit){
+        new_string[ns_i]=string[s_i];
+        ns_i++;
+        s_i++;
+    }
+    new_string[ns_i]='\0';
+    return;
 }
