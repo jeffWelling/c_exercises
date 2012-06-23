@@ -1,1 +1,118 @@
-Once upon a time in never-never-land there was a small boy named Peter Pan who was eaten by a crocodile. It was painful and there was screaming, and the screaming drew a group of 'lost boys' to the scene of the incident where they discovered what was left of the once-famous Peter Pan. The End. Eat your heart out Disney.
+#include <stdio.h>
+#define MAXLINE 400
+int getline_( char s[], int limit );
+int strip_comments( char s[], int state );
+int substrcp( char s[], int s_from, int s_to, char new_string[], int ns_i, int limit );
+int comment_end( char s[], int i );
+
+
+//Write a program to remove all comments from a C program. Don't forget to
+//handle quoted strings and character constants properly. C comments don't nest.
+int main()
+{
+    char string[MAXLINE];
+    getline_( string, MAXLINE );
+    strip_comments( string );
+    printf( "%s", string );
+    return 0;
+}
+
+int getline_( char s[], int limit)
+{
+    int i, c;
+    while( (c=getchar()) != EOF && c != '\n' && i < limit-1 ){
+        s[i]=c;
+        i++;
+    }
+    if( c == '\n' ){
+        s[i]=c;
+        i++;
+    }
+    s[i]='\0';
+    return i;
+}
+
+int strip_comments( char string[], int state )
+{
+    int first_char, i, end_of_comment, ns_i, counter;
+    char s[MAXLINE];
+    first_char=state;
+    end_of_comment= ns_i= 0;
+    // fubar fubar fubar /*fubar*/
+    /* fubar fubar
+       */
+    
+    while( s[i] != '\0' && s[i] != '\n' ){
+
+        if( first_char==0 ){
+            //not yet in a comment.
+            if( s[i]=='/' && s[i+1] == '*' ){
+                first_char=1;
+                //find end of comment
+                end_of_comment= comment_end( s, s_i );
+                if( end_of_comment==0 )
+                    first_char=0;
+                // copy s[i] until comment, unless s[0]=='\n'
+                if( end_of_comment==0 && s[0]=='\n' && s[0]=='\0' ){
+                    //comment wraps to next line
+                    //copy s[0] to beginning of comment, return 1
+                    counter=substrcp( s, 0, s_i, new_string, ns_i, MAXLINE );
+                    ns_i+=counter;
+                    strcp( new_string, s );
+                    return 1;
+                } else {
+                    //comment ends on same line
+                    //copy s[0] to beginning of comment
+                    counter= substrcp( s, 0, s_i, new_string, ns_i, MAXLINE );
+                    ns_i+=counter;
+                    //copy s[end_of_comment] to '\0';
+                    counter= substrcp( s, end_of_comment, strlen(s), new_string, ns_i, MAXLINE );
+                    ns_i+=counter;
+
+                }
+            } 
+        } else if ( first_char==1 ){
+            //already in a comment from previous line
+            //find end of comment
+            end_of_comment= comment_end( s, 0 );
+            if( end_of_comment==0 && ( s[i]=='\n' || s[i]=='\0' ) ){
+                //comment continues to next line
+                s[0]='\n';
+                s[1]='\0';
+                return 1;
+            }
+            //cp from end of comment to end of string
+            counter=substrcp( s, end_of_comment, strlen(s), new_string, ns_i, MAXLINE );
+            ns_i+=counter;
+        } else {
+            //panic omgwtfbbq
+            printf( "%s", "Invalid state?" );
+        }
+        i++;
+    } 
+}
+
+int substrcp( char s[], int s_from, int s_to, char new_string[], int ns_i, int limit ){
+    //copy s[ s_from - s_to ] into new_string
+    int i=s_from;
+    int counter=0;
+    while( i<s_to && i<limit && ns_i<limit){
+        new_string[ns_i]= s[i];
+        ns_i++;
+        i++;
+        counter++;
+    }
+    new_string[ns_i]='\0';
+    return counter;
+}
+
+int comment_end( char s[], int i )
+{
+    while( (s[i] != '*' && s[i+1] != '/') && s[i] != '\n' && s[i] != '\0' ){ 
+        i++;
+    }
+    if( s[i]=='*' && s[i+1]=='/' ){
+        return i+1;
+    }
+    return 0;
+}
