@@ -28,6 +28,11 @@ int getline_( char s[], int limit)
     for( i=0; (i<limit-1) + ((c=getchar())!='\n') + (c!=EOF) == 3; i++){
            s[i]=c;
     } 
+    c=getchar();
+    while( ((i<limit-1)+(c!='\n')+(c!=EOF))==3 ){
+        s[i++]=c;
+        c=getchar();
+    }
     if( c == '\n' ){
         s[i]=c;
         i++;
