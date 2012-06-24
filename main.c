@@ -11,10 +11,9 @@ static const long hextable[] = {
     ['a'] = 10,11,12,13,14,15
 };
 
-// Write a loop equivalent to the for loop above without using && or ||.
+// Exercise 2-4. Write an alternative version of squeeze(s1,s2) that deletes each character in
+// s1 that matches any character in the string s2.
 //
-// for (i=0; i < lim-1 && (c=getchar()) != '\n' && c != EOF; ++i)
-//      s[i] = c;
 int main(){
     char s[MAXLINE];
     getline_( s, MAXLINE );
@@ -26,8 +25,6 @@ int getline_( char s[], int limit)
 {
     int i, c;
     i=0;
-// for (i=0; i < lim-1 && (c=getchar()) != '\n' && c != EOF; ++i)
-//      s[i] = c;
     for( i=0; (i<limit-1) + ((c=getchar())!='\n') + (c!=EOF) == 3; i++){
            s[i]=c;
     } 
@@ -46,9 +43,6 @@ int htoi( char s[] ){
         if( i==0 && s[i]=='0' && (s[i+1]=='x' || s[i+1]=='X') ){
             i+=2;
         } else {
-            printf( "\n\n%li\n", ret );
-            printf( "%d\n%c\n", s[i], s[i] );
-            printf( "%li\n", hextable[ (int) s[i] ] );
             ret= (ret << 4) | hextable[ (int) s[i++] ];
         }
     }
