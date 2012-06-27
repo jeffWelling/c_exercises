@@ -4,10 +4,12 @@
 int getline_( char s[], int limit );
 int squish( char string[], char gsub_chars[] );
 int string_has( char string[], char c );
+int any( char string1[], char string2[] );
 
-// Exercise 2-4. Write an alternative version of squeeze(s1,s2) that deletes each character in
-// s1 that matches any character in the string s2.
-//
+//Write the function any(s1,s2), which returns the first location in a string s1
+//where any character from the string s2 occurs, or -1 if s1 contains no characters from s2.
+//(The standard library function strpbrk does the same job but returns a pointer to the
+//location.)
 int main()
 {
     char string[MAXLINE];
@@ -16,8 +18,7 @@ int main()
     getline_( string, MAXLINE );
     printf( "Please enter the characters to remove from string:\n" );
     getline_( remove, MAXLINE );
-    squish( string, remove );
-    printf( "%s", string );
+    printf( "The first occurance of one of those characters is at: %d\n", any(string, remove) );
     return 0;
 }
 
@@ -59,8 +60,22 @@ int string_has( char string[], char c )
 {
     int i=0;
     while( string[i]!='\0' ){
-        if( string[i++]==c )
-            return 1;
+        if( string[i]==c )
+            return i;
+        i++;
     }
-    return 0;
+    return -1;
+}
+
+int any( char string1[], char string2[] )
+{
+    int string2_i=0;
+    int loc=0;
+    while( string2[string2_i]!='\n' && string2[string2_i]!='\0' ){
+        if( (loc=string_has(string1, string2[string2_i])) >= 0 ){
+            return loc+1;
+        }
+        string2_i++;
+    }
+    return -1;
 }
